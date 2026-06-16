@@ -20,15 +20,17 @@
   --tri-speed-max:8500ms;   /* max lifetime animation */
 }
 
+/* base reset and type */
 *{box-sizing:border-box;font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale}
 html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg-900),var(--bg-800));color:var(--text);}
 
+/* page layout: keep everything visible within one viewport where reasonable */
 .page{
   height:100vh;
   display:flex;
   flex-direction:column;
   align-items:center;
-  padding:28px;
+  padding:20px;
 }
 
 /* header / nav */
@@ -40,20 +42,22 @@ html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg-900),v
   justify-content:space-between;
   align-items:center;
   border-bottom:1px solid rgba(255,255,255,0.03);
-  margin-bottom:24px;
+  margin-bottom:18px;
   gap:var(--gap);
+  padding:0 6px;
 }
 
+/* brand block */
 .brand{
   display:flex;
   align-items:center;
-  gap:12px;
+  gap:10px;
   font-weight:700;
   letter-spacing:0.4px;
   color:var(--text);
 }
 
-/* brand title beside logo */
+/* brand title beside logo - hide on very small screens to save space */
 .brand-title{
   font-size:16px;
   font-weight:700;
@@ -63,15 +67,7 @@ html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg-900),v
   user-select:text;
 }
 
-.brand-dot{
-  width:12px;
-  height:12px;
-  background:var(--accent);
-  display:inline-block;
-  box-shadow:0 0 8px rgba(246,200,95,0.14);
-}
-
-/* logo from assets */
+/* logo from assets - slightly smaller on mobile */
 .brand-logo{
   width:36px;
   height:36px;
@@ -79,28 +75,37 @@ html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg-900),v
   object-fit:contain;
 }
 
-/* no rounding: sharp edges */
+/* nav list: allow wrapping on narrow screens */
 .nav-list{
   list-style:none;
   display:flex;
-  gap:18px;
+  gap:12px;
   margin:0;
   padding:0;
   align-items:center;
+  flex-wrap:wrap;
 }
 
+/* links: increased touch area for mobile */
 .nav-link, .btn-trigger{
   color:var(--muted);
   text-decoration:none;
-  padding:8px 12px;
+  padding:10px 14px;
   border:1px solid transparent;
   font-weight:600;
   font-size:15px;
-  display:inline-block;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:44px;
   background:transparent;
   cursor:pointer;
+  border-radius:2px;
 }
 
+.nav-link small, .btn-trigger small { display:none; }
+
+/* hover / focus */
 .nav-link:hover, .nav-link:focus, .btn-trigger:hover, .btn-trigger:focus{
   color:var(--text);
   border-color:rgba(255,255,255,0.04);
@@ -108,22 +113,25 @@ html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg-900),v
   outline:none;
 }
 
-/* products dropdown */
+/* products dropdown - full width on mobile */
 .nav-products{ position:relative; }
 .products-menu{
   position:absolute;
   top:100%;
   left:0;
-  min-width:180px;
-  background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-  border:1px solid rgba(255,255,255,0.03);
+  min-width:200px;
+  /* stronger, mostly-opaque background to improve text contrast */
+  background: rgba(6,8,10,0.96);
+  border:1px solid rgba(255,255,255,0.06);
+  color: var(--text);
   display:none;
   flex-direction:column;
   padding:8px;
   gap:6px;
   margin-top:8px;
-  box-shadow:0 8px 30px rgba(0,0,0,0.5);
-  z-index:20;
+  box-shadow:0 8px 30px rgba(0,0,0,0.6);
+  z-index:30;
+  opacity: 1; /* fully opaque for clarity */
 }
 .products-menu.open{ display:flex; }
 
@@ -131,17 +139,18 @@ html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg-900),v
   background:transparent;
   border:1px solid transparent;
   color:var(--text);
-  padding:10px 12px;
+  padding:12px 14px;
   text-align:left;
   font-weight:700;
   cursor:pointer;
+  min-width:160px;
 }
 .product-btn:hover, .product-btn:focus{
   background:linear-gradient(180deg, rgba(246,200,95,0.06), rgba(246,200,95,0.02));
   border-color:rgba(255,255,255,0.03);
 }
 
-/* hero */
+/* hero area */
 .hero{
   width:100%;
   max-width:var(--max-w);
@@ -151,10 +160,11 @@ html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg-900),v
   border:1px solid rgba(255,255,255,0.03);
   display:flex;
   position:relative;
-  padding:48px;
+  padding:40px;
   align-items:center;
   justify-content:flex-start;
   overflow:hidden;
+  border-radius:4px;
 }
 
 .hero-inner{
@@ -222,8 +232,6 @@ html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg-900),v
 .d2{transform:translateY(-6px) scale(.9);opacity:0.85}
 .d3{transform:translateY(-12px) scale(.7);opacity:0.8}
 
-
-
 /* triangle background layer */
 .bg-triangles{
   position:absolute;
@@ -266,11 +274,73 @@ html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg-900),v
 /* make sure hero contents sit above triangles */
 .hero-inner, .accent-dots{position:relative; z-index:1}
 
-/* responsive */
+/* Responsive tweaks */
+
+/* Tablet and small desktops */
+@media (max-width:1000px){
+  :root{ --max-w:900px; }
+  .hero{padding:28px;}
+  .title{font-size:30px;}
+  .brand-logo{width:32px;height:32px;}
+}
+
+/* Mobile: compact header, larger touch targets, stacked layout if needed */
 @media (max-width:720px){
-  .nav{padding:0 6px}
-  .hero{padding:20px; min-height: calc(100vh - 150px);}
-  .title{font-size:28px}
+  :root{ --max-w:100%; }
+  .nav{
+    height:56px;
+    margin-bottom:12px;
+    padding:0 10px;
+  }
+
+  /* collapse brand title to preserve space */
+  .brand-title{ display:none; }
+
+  /* make nav-list compact and allow wrapping beneath header if it doesn't fit */
+  .nav-list{
+    gap:8px;
+  }
+
+  /* increase tap targets */
+  .nav-link, .btn-trigger{
+    padding:12px 12px;
+    font-size:15px;
+    min-height:48px;
+  }
+
+  /* move products menu to align to right and be full-width-ish */
+  .products-menu{
+    left:auto;
+    right:8px;
+    min-width:180px;
+  }
+
+  .hero{
+    padding:18px;
+    align-items:flex-start;
+    min-height: calc(100vh - 120px); /* keep content visible on small screens */
+    justify-content:flex-start;
+  }
+
+  .title{font-size:24px}
+  .subtitle{font-size:14px}
   .accent-dots{right:12px;bottom:12px}
-  .products-menu{right:8px; left:auto; min-width:160px;}
+
+  /* ensure news list / products list scroll within area if content grows */
+  .hero-inner{ max-height: calc(100vh - 220px); overflow:auto; padding-right:6px; -webkit-overflow-scrolling:touch;}
+}
+
+/* Very small phones: reduce hero padding so main content fits */
+@media (max-height:600px){
+  .page{ padding:12px; }
+  .nav{ height:52px; }
+  .hero{ padding:14px; min-height: calc(100vh - 110px); }
+  .title{font-size:22px;}
+}
+
+/* Accessibility: focus outlines for keyboard users */
+a:focus, button:focus{
+  box-shadow:0 0 0 3px rgba(246,200,95,0.12);
+  border-color:rgba(246,200,95,0.14);
+  outline:none;
 }

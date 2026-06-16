@@ -1,98 +1,137 @@
 /*
-  Load a simple numeric-keyed YAML of products and render buttons into #products-menu.
+  Load a categorized YAML of products and render grouped buttons into #products-menu.
   Expected format (products.yml):
-  1:
-    name: "Animal Song"
-    link: "anso.html"
-  2:
-    name: "crazy dave"
-    link: "www.crazydave.com"
+  free:
+    1:
+      name: "Free Item"
+      link: "..."
+  paid:
+    1:
+      name: "Paid Item"
+      link: "..."
 */
 
 const prodMenu = document.getElementById('products-menu');
 
-function parseNumberedMapYaml(text){
+function parseCategorizedYaml(text){
   const lines = text.split(/\r?\n/);
-  const items = [];
-  let cur = null;
-  let curIndent = 0;
-  for(let raw of lines){
+  const out = {};
+  let curCat = null;
+  let curItem = null;
+  let curItemIndent = 0;
+
+  for(const raw of lines){
     if(raw.trim() === '') continue;
-    const m = raw.match(/^(\s*)(\d+):\s*$/);
-    if(m){
-      cur = { name:'Untitled', link:'#' };
-      items.push(cur);
-      curIndent = m[1].length;
+    const line = raw.replace(/\t/g, '  ');
+    const mCat = line.match(/^(\s*)([A-Za-z0-9_\-]+)\s*:\s*$/);
+    const mNum = line.match(/^(\s*)(\d+)\s*:\s*$/);
+    const mKV = line.match(/^(\s*)([A-Za-z0-9_\-]+)\s*:\s*(.*)$/);
+
+    if(mCat && mCat[1].length === 0){
+      // top-level category
+      curCat = mCat[2];
+      out[curCat] = out[curCat] || [];
+      curItem = null;
+      curItemIndent = 0;
       continue;
     }
-    const kv = raw.match(/^(\s*)([A-Za-z0-9_\-]+)\s*:\s*(.*)$/);
-    if(kv && cur){
-      const indent = kv[1].length;
-      if(indent > curIndent){
-        const k = kv[2].trim();
-        let v = kv[3].trim();
-        if(v.startsWith('"') && v.endsWith('"')) v = v.slice(1,-1);
-        if(v.startsWith("'") && v.endsWith("'")) v = v.slice(1,-1);
-        cur[k] = v;
+
+    if(mNum && curCat){
+      curItem = { name: 'Untitled', link: '#' };
+      out[curCat].push(curItem);
+      curItemIndent = mNum[1].length;
+      continue;
+    }
+
+    if(mKV && curItem){
+      const indent = mKV[1].length;
+      if(indent > curItemIndent){
+        const key = mKV[2];
+        let val = mKV[3].trim();
+        if(val.startsWith('"') && val.endsWith('"')) val = val.slice(1,-1);
+        if(val.startsWith("'") && val.endsWith("'")) val = val.slice(1,-1);
+        curItem[key] = val;
       }
     }
   }
-  return items;
+
+  return out;
 }
 
 function ensureUrl(url){
   if(!url) return '#';
-  // treat absolute http(s) or protocol-relative or relative
+  // absolute URLs or protocol-relative or root-relative paths -> return as-is
   if(/^[a-zA-Z][a-zA-Z0-9+\-.]*:\/\//.test(url) || url.startsWith('//') || url.startsWith('/') ){
     return url;
   }
-  // add https:// if it looks like external (contains a dot and no slash at start)
-  if(url.includes('.') && !url.includes('/')) return 'https://' + url;
+  // explicit relative paths or file names (including .html) or any path containing a slash -> keep as relative
+  if(url.startsWith('./') || url.startsWith('../') || url.endsWith('.html') || url.indexOf('/') !== -1){
+    return url;
+  }
+  // otherwise treat as a bare hostname and prepend https://
+  if(url.includes('.')) return 'https://' + url;
   return url;
 }
 
-function renderProducts(items){
+function renderProducts(categorized){
   if(!prodMenu) return;
   prodMenu.innerHTML = '';
-  if(!items.length) {
+
+  const cats = Object.keys(categorized);
+  if(!cats.length){
     prodMenu.textContent = 'No products.';
     return;
   }
-  items.forEach(it=>{
-    const btn = document.createElement('button');
-    btn.className = 'product-btn';
-    btn.setAttribute('role','menuitem');
-    btn.type = 'button';
-    btn.textContent = it.name || 'Untitled';
-    const href = ensureUrl(it.link);
-    btn.addEventListener('click', (e)=>{
-      // close menu if app.js expects that behavior by focusing/closing
-      // navigate: same-origin relative links open in current tab, external open new tab
-      try{
-        const u = new URL(href, location.href);
-        const isSameOrigin = u.origin === location.origin;
-        if(isSameOrigin){
-          location.href = u.href;
-        } else {
-          window.open(u.href, '_blank', 'noopener');
+
+  cats.forEach(cat=>{
+    const items = categorized[cat] || [];
+    // category header
+    const wrap = document.createElement('div');
+    wrap.className = 'product-category';
+    const h = document.createElement('div');
+    h.className = 'product-cat-title';
+    // human-friendly label
+    h.textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
+    wrap.appendChild(h);
+
+    // items
+    const list = document.createElement('div');
+    list.className = 'product-cat-list';
+    items.forEach(it=>{
+      const btn = document.createElement('button');
+      btn.className = 'product-btn';
+      btn.setAttribute('role','menuitem');
+      btn.type = 'button';
+      btn.textContent = it.name || 'Untitled';
+      const href = ensureUrl(it.link);
+      btn.addEventListener('click', ()=>{
+        try{
+          const u = new URL(href, location.href);
+          const isSameOrigin = u.origin === location.origin;
+          if(isSameOrigin){
+            location.href = u.href;
+          } else {
+            window.open(u.href, '_blank', 'noopener');
+          }
+        }catch(err){
+          window.open(href, '_blank');
         }
-      }catch(err){
-        // fallback
-        window.open(href, '_blank');
-      }
+      });
+      list.appendChild(btn);
     });
-    prodMenu.appendChild(btn);
+
+    wrap.appendChild(list);
+    prodMenu.appendChild(wrap);
   });
 }
 
-// load products.yml
 async function loadProducts(){
   if(!prodMenu) return;
   try{
     const res = await fetch('products.yml', { cache: 'no-cache' });
     const txt = await res.text();
-    const items = parseNumberedMapYaml(txt);
-    renderProducts(items);
+    const categorized = parseCategorizedYaml(txt);
+    renderProducts(categorized);
   }catch(err){
     console.error('Failed to load products.yml', err);
     prodMenu.textContent = 'Failed to load products.';

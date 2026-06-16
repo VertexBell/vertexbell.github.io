@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <link rel="stylesheet" href="styles.css" />
     <link rel="icon" href="VB logo.png" type="image/png" />
-    <title>VertexBell Hub</title>
+    <title>VertexBell — Background Saver</title>
   </head>
   <body>
     <div class="page">
@@ -19,7 +19,7 @@
 
         <nav class="nav-right" role="navigation" aria-label="Main">
           <ul class="nav-list">
-            <li class="nav-item"><a href="#" class="nav-link">Home</a></li>
+            <li class="nav-item"><a href="index.html" class="nav-link">Home</a></li>
 
             <li class="nav-item nav-products">
               <button class="nav-link btn-trigger" aria-expanded="false" aria-controls="products-menu">
@@ -37,10 +37,26 @@
 
       <main class="hero" role="main">
         <div class="hero-inner">
-          <h1 class="title">Welcome to the VertexBell Hub</h1>
-          <p class="subtitle">A practical gateway to products, updates and resources.</p>
+          <h1 class="title">Background Saver</h1>
+          <p class="subtitle">Placeholder UI — replace with controls to save or manage background assets.</p>
 
+          <div style="display:flex;flex-direction:column;gap:10px;margin-top:18px;">
+            <div style="background:rgba(255,255,255,0.02);padding:12px;border-radius:4px;color:var(--muted);">
+              Placeholder: preview area
+            </div>
+
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <button class="btn primary" disabled>Save</button>
+              <button class="btn ghost" disabled>Import</button>
+              <button class="btn ghost" disabled>Export</button>
+            </div>
+
+            <div style="margin-top:8px;color:var(--muted);font-size:13px;">
+              Settings and saved backgrounds will appear here (placeholder).
+            </div>
+          </div>
         </div>
+
         <div class="bg-triangles" id="bg-triangles" aria-hidden="true"></div>
       </main>
     </div>
