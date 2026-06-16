@@ -1,0 +1,11 @@
+- title: "Launch: VertexBell Hub"
+  date: 2026-06-01
+  body: "We launched the VertexBell Hub — a simple place for products and updates."
+
+- title: "Placeholder Update"
+  date: 2026-06-10
+  body: "This is a sample news item. Edit news.yml to add more entries."
+
+- title: "Another Note"
+  date: 2026-06-15
+  body: "News entries are loaded from a /news.yml file and rendered on the news page."

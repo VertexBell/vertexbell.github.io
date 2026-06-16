@@ -1,0 +1,276 @@
+:root{
+  --bg-900:#030405;
+  --bg-800:#0b0c0d;
+  --bg-700:#121314;
+  --text:#d9dfe6;
+  --muted:#9aa2a8;
+  --accent:#f6c85f; /* yellow dots / triangles */
+  --gap:20px;
+  --nav-h:64px;
+  --max-w:1100px;
+  --radius:2px;
+
+  /* triangle background config (easy to change) */
+  --tri-count:18;            /* number of triangles (JS reads but also useful as reference) */
+  --tri-min-size:8px;       /* smallest triangle */
+  --tri-max-size:36px;      /* largest triangle */
+  --tri-opacity:0.12;       /* base opacity for triangles */
+  --tri-blur:6px;           /* soft glow blur */
+  --tri-speed-min:3500ms;   /* min lifetime animation */
+  --tri-speed-max:8500ms;   /* max lifetime animation */
+}
+
+*{box-sizing:border-box;font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale}
+html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg-900),var(--bg-800));color:var(--text);}
+
+.page{
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:28px;
+}
+
+/* header / nav */
+.nav{
+  width:100%;
+  max-width:var(--max-w);
+  height:var(--nav-h);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  border-bottom:1px solid rgba(255,255,255,0.03);
+  margin-bottom:24px;
+  gap:var(--gap);
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  font-weight:700;
+  letter-spacing:0.4px;
+  color:var(--text);
+}
+
+/* brand title beside logo */
+.brand-title{
+  font-size:16px;
+  font-weight:700;
+  color:var(--text);
+  letter-spacing:0.3px;
+  line-height:1;
+  user-select:text;
+}
+
+.brand-dot{
+  width:12px;
+  height:12px;
+  background:var(--accent);
+  display:inline-block;
+  box-shadow:0 0 8px rgba(246,200,95,0.14);
+}
+
+/* logo from assets */
+.brand-logo{
+  width:36px;
+  height:36px;
+  display:block;
+  object-fit:contain;
+}
+
+/* no rounding: sharp edges */
+.nav-list{
+  list-style:none;
+  display:flex;
+  gap:18px;
+  margin:0;
+  padding:0;
+  align-items:center;
+}
+
+.nav-link, .btn-trigger{
+  color:var(--muted);
+  text-decoration:none;
+  padding:8px 12px;
+  border:1px solid transparent;
+  font-weight:600;
+  font-size:15px;
+  display:inline-block;
+  background:transparent;
+  cursor:pointer;
+}
+
+.nav-link:hover, .nav-link:focus, .btn-trigger:hover, .btn-trigger:focus{
+  color:var(--text);
+  border-color:rgba(255,255,255,0.04);
+  background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);
+  outline:none;
+}
+
+/* products dropdown */
+.nav-products{ position:relative; }
+.products-menu{
+  position:absolute;
+  top:100%;
+  left:0;
+  min-width:180px;
+  background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border:1px solid rgba(255,255,255,0.03);
+  display:none;
+  flex-direction:column;
+  padding:8px;
+  gap:6px;
+  margin-top:8px;
+  box-shadow:0 8px 30px rgba(0,0,0,0.5);
+  z-index:20;
+}
+.products-menu.open{ display:flex; }
+
+.product-btn{
+  background:transparent;
+  border:1px solid transparent;
+  color:var(--text);
+  padding:10px 12px;
+  text-align:left;
+  font-weight:700;
+  cursor:pointer;
+}
+.product-btn:hover, .product-btn:focus{
+  background:linear-gradient(180deg, rgba(246,200,95,0.06), rgba(246,200,95,0.02));
+  border-color:rgba(255,255,255,0.03);
+}
+
+/* hero */
+.hero{
+  width:100%;
+  max-width:var(--max-w);
+  flex:1;
+  min-height:0;
+  background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));
+  border:1px solid rgba(255,255,255,0.03);
+  display:flex;
+  position:relative;
+  padding:48px;
+  align-items:center;
+  justify-content:flex-start;
+  overflow:hidden;
+}
+
+.hero-inner{
+  max-width:640px;
+}
+
+.title{
+  margin:0 0 12px 0;
+  font-size:34px;
+  color:var(--text);
+  line-height:1.05;
+  font-weight:700;
+}
+
+.subtitle{
+  margin:0 0 20px 0;
+  color:var(--muted);
+  font-size:16px;
+}
+
+/* buttons: functional, sharp corners */
+.btn{
+  display:inline-block;
+  padding:12px 16px;
+  text-decoration:none;
+  font-weight:700;
+  border-radius:0;
+  border:1px solid rgba(255,255,255,0.04);
+  min-height:44px;
+  line-height:20px;
+  font-size:14px;
+  margin-right:12px;
+}
+
+.btn.primary{
+  background:linear-gradient(180deg, rgba(246,200,95,0.14), rgba(246,200,95,0.06));
+  color:#0b0b0b;
+  border-color:rgba(246,200,95,0.14);
+}
+
+.btn.ghost{
+  background:transparent;
+  color:var(--text);
+}
+
+/* accent yellow dots */
+.accent-dots{
+  position:absolute;
+  right:22px;
+  bottom:22px;
+  display:flex;
+  gap:10px;
+  transform:translateZ(0);
+}
+.dot{
+  width:10px;
+  height:10px;
+  background:var(--accent);
+  box-shadow:0 0 10px rgba(246,200,95,0.14);
+  display:inline-block;
+}
+
+/* three slightly varied dots for texture */
+.d1{transform:scale(1.2);opacity:0.95}
+.d2{transform:translateY(-6px) scale(.9);opacity:0.85}
+.d3{transform:translateY(-12px) scale(.7);opacity:0.8}
+
+
+
+/* triangle background layer */
+.bg-triangles{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  overflow:hidden;
+  z-index:0;
+}
+
+/* each triangle is a clipped element */
+.bg-triangles .triangle{
+  position:absolute;
+  width:var(--tri-max-size);
+  height:var(--tri-max-size);
+  transform-origin:center;
+  opacity:0;
+  filter:blur(var(--tri-blur));
+  will-change:transform,opacity;
+  clip-path:polygon(50% 0%, 0% 100%, 100% 100%); /* triangle pointing up */
+  background:linear-gradient(180deg, rgba(246,200,95,0.95), rgba(246,200,95,0.7));
+  mix-blend-mode:screen;
+  box-shadow:0 0 10px rgba(246,200,95,0.12);
+}
+
+/* animation toggled by JS: fade in and out with slight move/scale */
+@keyframes triFade {
+  0%{opacity:0; transform:translateY(6px) scale(.85) rotate(0deg)}
+  10%{opacity:var(--tri-opacity); transform:translateY(0) scale(1) rotate(6deg)}
+  70%{opacity:var(--tri-opacity); transform:translateY(-6px) scale(1.02) rotate(-6deg)}
+  100%{opacity:0; transform:translateY(-14px) scale(.9) rotate(12deg)}
+}
+
+/* when active, JS will set animation-duration inline per element */
+.bg-triangles .triangle.active{
+  animation-name:triFade;
+  animation-timing-function:ease-in-out;
+  animation-fill-mode:forwards;
+}
+
+/* make sure hero contents sit above triangles */
+.hero-inner, .accent-dots{position:relative; z-index:1}
+
+/* responsive */
+@media (max-width:720px){
+  .nav{padding:0 6px}
+  .hero{padding:20px; min-height: calc(100vh - 150px);}
+  .title{font-size:28px}
+  .accent-dots{right:12px;bottom:12px}
+  .products-menu{right:8px; left:auto; min-width:160px;}
+}
